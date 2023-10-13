@@ -1,0 +1,235 @@
+name: GameCI Template 🎮
+
+on: push
+
+env:
+  UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+  UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+  UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+
+jobs:
+  # testAllModes:
+  #   name: Test in ${{ matrix.testMode }}
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       projectPath:
+  #         -
+  #       testMode:
+  #         - playmode
+  #         - editmode
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         lfs: true
+  #     - uses: webfactory/ssh-agent@v0.5.2
+  #       with:
+  #         ssh-private-key: |
+  #           ${{ secrets.SSH_CM_PRIVATE_KEY }}
+  #           ${{ secrets.SSH_T_PRIVATE_KEY }}
+  #     - run: |
+  #         git clone https://github.com/TypingTrainer2/tween-package.git
+  #         cd tween-package
+  #          ls
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: ${{ matrix.projectPath }}/Library
+  #         key: Library-${{ matrix.projectPath }}
+  #         restore-keys: |
+  #           Library-
+  #     - uses: game-ci/unity-test-runner@v2
+  #       id: tests
+  #       with:
+  #         sshAgent: ${{ env.SSH_AUTH_SOCK }}
+  #         projectPath: ${{ matrix.projectPath }}
+  #         testMode: ${{ matrix.testMode }}
+  #         artifactsPath: ${{ matrix.testMode }}-artifacts
+  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
+  #         checkName: ${{ matrix.testMode }} Test Results
+  #         coverageOptions: "generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+my.assembly.*"
+  #     - uses: actions/upload-artifact@v2
+  #       if: always()
+  #       with:
+  #         name: Test results for ${{ matrix.testMode }}
+  #         path: ${{ steps.tests.outputs.artifactsPath }}
+  #     - uses: actions/upload-artifact@v2
+  #       if: always()
+  #       with:
+  #         name: Coverage results for ${{ matrix.testMode }}
+  #         path: ${{ steps.tests.outputs.coveragePath }}
+
+  buildWebGL:
+    # needs: testAllModes
+    name: Build for WebGL 🖥️
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: webfactory/ssh-agent@v0.5.2
+        with:
+          ssh-private-key: |
+            # ${{ secrets.SSH_CM_PRIVATE_KEY }}
+            # ${{ secrets.SSH_T_PRIVATE_KEY }}
+            # ${{ secrets.TEXT_MANAGEMENT_DEPLOY }}
+            # ${{ secrets.BROWSER_API_DEPLOY_KEY }}
+            # ${{ secrets.CHUNK_TOOLS_DEPLOY_KEY }}
+            # ${{ secrets.TOOLS_DEPLOY_KEY }}
+            # ${{ secrets.TRACE_DEPLOY_KEY }}
+            # ${{ secrets.GAME_EVENT_DEPLOY_KEY }}
+            # ${{ secrets.SSH_RESULT_SCREEN_DEPLOY_KEY }}
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v2
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+      - name: Restore Library cache
+        uses: actions/cache@v2
+        with:
+          path: Library
+          key: Library-build-WebGL
+          restore-keys: |
+            Library-build-
+            Library-
+      - name: Clone Packages To Use Locally
+        run: |
+          git clone git@github.com:TypingTrainer2/text-color-manager-package.git
+          git clone git@github.com:TypingTrainer2/tween-package.git
+          git clone git@github.com:TypingTrainer2/text-data-manager-package.git
+          git clone git@github.com:TypingTrainer2/browser-api-package.git
+          git clone git@github.com:TypingTrainer2/chunk-tools-package.git
+          git clone git@github.com:TypingTrainer2/tools-package.git
+          git clone git@github.com:TypingTrainer2/trace-text-package.git
+          git clone git@github.com:TypingTrainer2/game-event-package.git
+          git clone git@github.com:TypingTrainer2/result-screen-package.git
+          echo ${{ github.workspace }}
+           echo "Editing package manifest"
+           chmod +x ./.github/workflows/edit_packages.sh
+           source ./.github/workflows/edit_packages.sh
+           cat Packages/manifest.json
+      - uses: game-ci/unity-builder@v2
+        with:
+          allowDirtyBuild: true
+          sshAgent: ${{ env.SSH_AUTH_SOCK }}
+          targetPlatform: WebGL
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-WebGL
+          path: build/WebGL
+
+  # buildWindows:
+  # needs: testAllModes
+  # name: Build for Windows 🖥️
+  # runs-on: ubuntu-latest
+  # strategy:
+  # fail-fast: false
+  # steps:
+  # - name: Checkout code
+  # uses: actions/checkout@v2
+
+  # - name: Create LFS file list
+  # run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+  # - name: Restore LFS cache
+  # uses: actions/cache@v2
+  # id: lfs-cache
+  # with:
+  # path: .git/lfs
+  # key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+  # - name: Git LFS Pull
+  # run: |
+  # git lfs pull
+  # git add .
+  # git reset --hard
+  # - name: Restore Library cache
+  # uses: actions/cache@v2
+  # with:
+  # path: Library
+  # key: Library-build-StandaloneWindows64
+  # restore-keys: |
+  # Library-build-
+  # Library-
+  # - uses: game-ci/unity-builder@v2
+  # with:
+  # targetPlatform: StandaloneWindows64
+
+  # - uses: actions/upload-artifact@v2
+  # with:
+  # name: build-StandaloneWindows64
+  # path: build/StandaloneWindows64
+
+  # buildAndroid:
+  # needs: testAllModes
+  # name: Build for Android 📱
+  # runs-on: ubuntu-latest
+  # strategy:
+  # fail-fast: false
+  # steps:
+  # - name: Checkout code
+  # uses: actions/checkout@v2
+
+  # - name: Create LFS file list
+  # run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+  # - name: Restore LFS cache
+  # uses: actions/cache@v2
+  # id: lfs-cache
+  # with:
+  # path: .git/lfs
+  # key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+  # - name: Git LFS Pull
+  # run: |
+  # git lfs pull
+  # git add .
+  # git reset --hard
+  # - name: Restore Library cache
+  # uses: actions/cache@v2
+  # with:
+  # path: Library
+  # key: Library-build-Android
+  # restore-keys: |
+  # Library-build-
+  # Library-
+  # - uses: game-ci/unity-builder@v2
+  # with:
+  # targetPlatform: Android
+
+  # - uses: actions/upload-artifact@v2
+  # with:
+  # name: build-Android
+  # path: build/Android
+
+  deployPages:
+    needs: buildWebGL
+    name: Deploy to Github Pages 🚀
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-WebGL
+          path: build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: gh-pages
+          folder: build/WebGL
