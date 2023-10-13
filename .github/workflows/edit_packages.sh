@@ -1,4 +1,4 @@
-# #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # sudo sed -i "s|git@github.com:TypingTrainer2/text-color-manager-package.git|file:/github/workspace/text-color-manager-package|" Packages/manifest.json
 # sudo sed -i "s|git@github.com:TypingTrainer2/tween-package.git|file:/github/workspace/tween-package|" Packages/manifest.json
