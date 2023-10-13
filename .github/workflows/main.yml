@@ -69,18 +69,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - uses: webfactory/ssh-agent@v0.5.2
-        # with:
-        #   ssh-private-key: |
-        # ${{ secrets.SSH_CM_PRIVATE_KEY }}
-        # ${{ secrets.SSH_T_PRIVATE_KEY }}
-        # ${{ secrets.TEXT_MANAGEMENT_DEPLOY }}
-        # ${{ secrets.BROWSER_API_DEPLOY_KEY }}
-        # ${{ secrets.CHUNK_TOOLS_DEPLOY_KEY }}
-        # ${{ secrets.TOOLS_DEPLOY_KEY }}
-        # ${{ secrets.TRACE_DEPLOY_KEY }}
-        # ${{ secrets.GAME_EVENT_DEPLOY_KEY }}
-        # ${{ secrets.SSH_RESULT_SCREEN_DEPLOY_KEY }}
+      # - uses: webfactory/ssh-agent@v0.5.2
+      #   with:
+      #     ssh-private-key: |
+      #   # ${{ secrets.SSH_CM_PRIVATE_KEY }}
+      #   # ${{ secrets.SSH_T_PRIVATE_KEY }}
+      #   # ${{ secrets.TEXT_MANAGEMENT_DEPLOY }}
+      #   # ${{ secrets.BROWSER_API_DEPLOY_KEY }}
+      #   # ${{ secrets.CHUNK_TOOLS_DEPLOY_KEY }}
+      #   # ${{ secrets.TOOLS_DEPLOY_KEY }}
+      #   # ${{ secrets.TRACE_DEPLOY_KEY }}
+      #   # ${{ secrets.GAME_EVENT_DEPLOY_KEY }}
+      #   # ${{ secrets.SSH_RESULT_SCREEN_DEPLOY_KEY }}
 
       - name: Create LFS file list
         run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
