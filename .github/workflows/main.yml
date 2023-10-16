@@ -237,5 +237,5 @@ jobs:
       - name: PR for vercel
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: vercel-page
           base: gh-pages
+          branch: vercel-page
