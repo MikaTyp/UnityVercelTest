@@ -234,8 +234,7 @@ jobs:
           branch: gh-pages
           folder: build/WebGL
 
-      - name: Deploy Vecel
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+      - name: PR for vercel
+        uses: peter-evans/create-pull-request@v5
         with:
           branch: vercel-page
-          folder: build/WebGL
