@@ -233,3 +233,9 @@ jobs:
         with:
           branch: gh-pages
           folder: build/WebGL
+
+      - name: Deploy Vecel
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: vercel-page
+          folder: build/WebGL
