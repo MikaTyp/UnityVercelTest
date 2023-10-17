@@ -235,6 +235,7 @@ jobs:
           folder: build/WebGL
 
   productionPromotion:
+    needs: deployPages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
