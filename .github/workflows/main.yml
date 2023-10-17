@@ -234,17 +234,6 @@ jobs:
           branch: gh-pages
           folder: build/WebGL
 
-      - name: Checkout gh-pages
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
-
-      - name: PR for vercel
-        uses: peter-evans/create-pull-request@v5
-        with:
-          base: gh-pages
-          branch: vercel-page
-
   prVercelPages:
     needs: deployPages
     name: Create Pull Request for Vercel Branch
