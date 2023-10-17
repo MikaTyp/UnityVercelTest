@@ -234,18 +234,30 @@ jobs:
           branch: gh-pages
           folder: build/WebGL
 
-  prVercelPages:
-    needs: deployPages
-    name: Create Pull Request for Vercel Branch
+  sync-branch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout gh-pages
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
+      - uses: actions/checkout@master
 
-      - name: PR for vercel
-        uses: peter-evans/create-pull-request@v5
+      - name: Merge gh-pages -> vercel-page
+        uses: devmasx/merge-branch@master
         with:
-          base: gh-pages
-          branch: vercel-page
+          type: now
+          from_branch: gh-pages
+          target_branch: vercel-page
+
+  # prVercelPages:
+  #   needs: deployPages
+  #   name: Create Pull Request for Vercel Branch
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout gh-pages
+  #       uses: actions/checkout@v2
+  #       with:
+  #         ref: vercel-page
+
+  #     - name: PR for vercel
+  #       uses: peter-evans/create-pull-request@v5
+  #       with:
+  #         base: vercel-page
+  #         branch: gh-pages
