@@ -234,21 +234,41 @@ jobs:
           branch: gh-pages
           folder: build/WebGL
 
-  productionPromotion:
+  copyBuildToOtherRepo:
     needs: deployPages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
           ref: vercel-page
-      - name: Reset promotion branch
+      - name: Reset
         run: |
           git fetch origin gh-pages:gh-pages
           git reset --hard gh-pages
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+      - name: Pushes test file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+       env:
+        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          branch: vercel-page-promotion
+          destination_repo: 'MikaTyp/GameBuildsTest'
+          destination_folder: 'UnityVercelTest'
+          commit_message: 'Test copy'
+
+  # productionPromotion:
+  #   needs: deployPages
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: vercel-page
+  #     - name: Reset promotion branch
+  #       run: |
+  #         git fetch origin gh-pages:gh-pages
+  #         git reset --hard gh-pages
+  #     - name: Create Pull Request
+  #       uses: peter-evans/create-pull-request@v5
+  #       with:
+  #         branch: vercel-page-promotion
 
   # sync-branch:
   #   runs-on: ubuntu-latest
