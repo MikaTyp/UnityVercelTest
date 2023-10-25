@@ -250,6 +250,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
+          source_file: "./"
           destination_repo: "MikaTyp/GameBuildsTest"
           destination_folder: "UnityVercelTest"
           commit_message: "Test copy"
