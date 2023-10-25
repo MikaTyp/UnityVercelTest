@@ -234,25 +234,25 @@ jobs:
           branch: gh-pages
           folder: build/WebGL
 
-  copyBuildToOtherRepo:
-    needs: deployPages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: vercel-page
-      - name: Reset
-        run: |
-          git fetch origin gh-pages:gh-pages
-          git reset --hard gh-pages
-      - name: Pushes test file
-        uses: dmnemec/copy_file_to_another_repo_action@main
-       env:
-        API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          destination_repo: 'MikaTyp/GameBuildsTest'
-          destination_folder: 'UnityVercelTest'
-          commit_message: 'Test copy'
+  # copyBuildToOtherRepo:
+  #   needs: deployPages
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         ref: vercel-page
+  #     - name: Reset
+  #       run: |
+  #         git fetch origin gh-pages:gh-pages
+  #         git reset --hard gh-pages
+  #     - name: Pushes test file
+  #       uses: dmnemec/copy_file_to_another_repo_action@main
+  #      env:
+  #       API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+  #       with:
+  #         destination_repo: 'MikaTyp/GameBuildsTest'
+  #         destination_folder: 'UnityVercelTest'
+  #         commit_message: 'Test copy'
 
   # productionPromotion:
   #   needs: deployPages
