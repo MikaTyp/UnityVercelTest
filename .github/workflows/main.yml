@@ -245,6 +245,14 @@ jobs:
         run: |
           git fetch origin gh-pages:gh-pages
           git reset --hard gh-pages
+      - name: Push test file
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          destination_repo: "MikaTyp/GameBuildsTest"
+          destination_folder: "UnityVercelTest"
+          commit_message: "Test copy"
 
   # copyBuildToOtherRepo:
   #   needs: deployPages
